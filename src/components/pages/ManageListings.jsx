@@ -1,171 +1,57 @@
-import React, { useState } from "react";
-import Sidebar from "../sidebar";
-import supabase from "../../../supabaseClient";
-import "./ManageListings.css";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 
 const ManageListings = () => {
-  const [formData, setFormData] = useState({
-    carName: "",
-    ownerName: "",
-    price: "",
-    year: "",
-    engineSize: "",
-    mileage: "",
-    driverType: "",
-    cylinders: "",
-    seats: "",
-    fuelType: "",
-    doors: "",
-    colour: "",
-    description: "",
-    cityMPG: "",
-    highwayMPG: "",
-    address: "",
-    addressLink: "",
-    video: "",
-    features: {},
-    mediaFiles: [], // For uploaded files
-  });
+  const [cars, setCars] = useState([]);
+  const navigate = useNavigate();
 
-  const [mediaError, setMediaError] = useState(""); // Stores media validation error
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    if (type === "checkbox") {
-      setFormData((prevData) => ({
-        ...prevData,
-        features: { ...prevData.features, [name]: checked },
-      }));
-    } else {
-      setFormData((prevData) => ({ ...prevData, [name]: value }));
-    }
-  };
-
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "video/mp4"];
-    const maxSize = 5 * 1024 * 1024; // 5MB limit
-
-    for (let file of files) {
-      if (!allowedTypes.includes(file.type)) {
-        setMediaError("Only JPG, PNG, JPEG images & MP4 videos are allowed.");
-        return;
+  useEffect(() => {
+    const fetchCars = async () => {
+      const { data, error } = await supabase.from("cars").select("*");
+      if (error) {
+        console.error("Error fetching cars:", error.message);
+      } else {
+        setCars(data);
       }
-      if (file.size > maxSize) {
-        setMediaError("Each file must be smaller than 5MB.");
-        return;
-      }
-    }
-
-    setMediaError(""); // Clear error if valid
-    setFormData((prevData) => ({
-      ...prevData,
-      mediaFiles: files,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (formData.mediaFiles.length === 0) {
-      setMediaError("Please upload at least one media file.");
-      return;
-    }
-
-    // Log the form data (For now, you can integrate API later)
-    console.log("Form submitted:", formData);
-  };
+    };
+    fetchCars();
+  }, []);
 
   return (
-    <div className="main-content">
-      <div className="header">
-        <h2>Add Car Details</h2>
-        <div className="profile">
-          <i className="fas fa-cog"></i>
-          <img
-            src="https://storage.googleapis.com/a1aa/image/1y0wDSJi7mwhpgTXmggxD2Dmj0DAs69u1_PpfqZDyA0.jpg"
-            alt="User"
-          />
-          <span>Name</span>
-        </div>
-      </div>
-
-      <div className="form-container">
-        <form onSubmit={handleSubmit}>
-          <div className="grid">
-            <input type="text" name="carName" placeholder="Car name" onChange={handleChange} />
-            <input type="text" name="ownerName" placeholder="Owner name" onChange={handleChange} />
-            <input type="text" name="price" placeholder="Price" onChange={handleChange} />
-            <input type="text" name="year" placeholder="Year" onChange={handleChange} />
-            <input type="text" name="engineSize" placeholder="Engine Size" onChange={handleChange} />
-            <input type="text" name="mileage" placeholder="Mileage" onChange={handleChange} />
-            <input type="text" name="driverType" placeholder="Driver Type" onChange={handleChange} />
-            <input type="text" name="cylinders" placeholder="Cylinders" onChange={handleChange} />
-            <input type="text" name="seats" placeholder="Seats" onChange={handleChange} />
-            <input type="text" name="fuelType" placeholder="Fuel type" onChange={handleChange} />
-            <input type="text" name="doors" placeholder="Doors" onChange={handleChange} />
-            <input type="text" name="colour" placeholder="Colour" onChange={handleChange} />
-          </div>
-
-          <textarea name="description" placeholder="Description" onChange={handleChange}></textarea>
-
-          <div className="grid">
-            <input type="text" name="cityMPG" placeholder="City MPG" onChange={handleChange} />
-            <input type="text" name="highwayMPG" placeholder="Highway MPG" onChange={handleChange} />
-          </div>
-
-          <div className="grid">
-            <input type="text" name="address" placeholder="Address" onChange={handleChange} />
-            <input type="text" name="addressLink" placeholder="Address Link (Google Maps)" onChange={handleChange} />
-          </div>
-
-          {/* Media Upload Section */}
-          <div className="media-upload">
-            <label>Media</label>
-            <div className="upload-box">
-              <i className="fas fa-cloud-upload-alt"></i>
-              <p>Drop files here or click to upload.</p>
-              <input type="file" multiple accept="image/*,video/mp4" onChange={handleFileChange} />
-            </div>
-            {mediaError && <p className="error-message">{mediaError}</p>}
-          </div>
-
-          <input type="text" name="video" placeholder="Video (mp4)" onChange={handleChange} />
-
-          {/* Features Section */}
-          <div className="features-container">
-            <div className="features">
-              <label className="features-title">Features:</label>
-              <div className="features-grid">
-                {[
-                  "A/C Front",
-                  "CCTV",
-                  "Leather",
-                  "Navigation system",
-                  "Rain sensing wipe",
-                  "Sun roof",
-                  "Central locking",
-                  "Sports package",
-                  "Front fog light",
-                  "Rear Spoilers",
-                  "Power steering",
-                ].map((feature) => (
-                  <div key={feature} className="feature-item">
-                    <input type="checkbox" name={feature} onChange={handleChange} />
-                    <label>{feature}</label>
-                  </div>
-                ))}
+    <div className="p-6 md:p-12 max-w-7xl mx-auto">
+      <h2 className="text-3xl md:text-4xl font-extrabold text-center text-gray-800 mb-8">
+        Manage Listings
+      </h2>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {cars.map((car) => (
+          <div
+            key={car.id}
+            className="bg-white shadow-lg rounded-xl overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <img
+              src={car.image || "https://via.placeholder.com/400"}
+              alt={car.name}
+              className="w-full h-56 object-cover rounded-t-xl"
+            />
+            <div className="p-5 flex flex-col gap-2">
+              <h3 className="text-xl font-semibold text-gray-800">{car.name} ({car.year})</h3>
+              <p className="text-red-500 text-2xl font-bold">₹ {car.price.toLocaleString()}</p>
+              <div className="flex flex-wrap gap-3 text-gray-600 text-sm mt-2">
+                <span className="bg-gray-100 px-3 py-1 rounded-lg">Fuel: {car.fuelType}</span>
+                <span className="bg-gray-100 px-3 py-1 rounded-lg">Mileage: {car.mileage} km</span>
+                <span className="bg-gray-100 px-3 py-1 rounded-lg">Transmission: {car.driverType}</span>
               </div>
+              <button
+                onClick={() => navigate(`/view-car/${car.id}`)}
+                className="mt-5 w-full bg-gradient-to-r from-red-500 to-red-700 text-white py-3 rounded-lg text-lg font-medium shadow-md hover:shadow-lg transition duration-300 hover:from-red-600 hover:to-red-800"
+              >
+                View Details
+              </button>
             </div>
           </div>
-
-          {/* Buttons */}
-          <div className="buttons">
-            <button type="submit" className="submit-btn">Submit</button>
-            <button type="reset" className="clear-btn">Clear</button>
-          </div>
-        </form>
+        ))}
       </div>
     </div>
   );

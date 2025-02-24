@@ -8,12 +8,12 @@ import ManageListings from "./components/pages/ManageListings";
 import Bookings from "./components/pages/Bookings";
 import FAQs from "./components/pages/FAQs";
 import Blogs from "./components/pages/Blogs";
-
+import AddCarDetails from "./components/pages/AddCarDetails";
 function App() {
   return (
     <Router>
       <div className="app-container">
-        <Sidebar />
+      
         <div className="content">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -23,6 +23,7 @@ function App() {
             <Route path="/bookings" element={<Bookings />} />
             <Route path="/faqs" element={<FAQs />} />
             <Route path="/blogs" element={<Blogs />} />
+            <Route path="/add-car" element={<AddCarDetails />} />
           </Routes>
         </div>
       </div>
