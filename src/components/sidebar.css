@@ -1,0 +1,43 @@
+.sidebar {
+    width: 20%;
+    background-color: #e5e7eb;
+    height: 100vh;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  
+  .main-content {
+    width: 80%;
+    margin-left: 10%; /* Adjusted to prevent overlap */
+    padding: 30px;
+  }
+  
+  .logo h1 {
+    color: #dc2626;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  nav {
+    margin-top: 20px;
+  }
+  
+  nav a {
+    display: block;
+    padding: 10px 15px;
+    color: #4b5563;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+  
+  nav a:hover {
+    background-color: #e5e7eb;
+  }
+  
+  nav a.active {
+    background-color: #2563eb;
+    color: white;
+  }
